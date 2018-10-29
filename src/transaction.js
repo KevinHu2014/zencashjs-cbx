@@ -398,10 +398,6 @@ function getSignData (_txObj, i) {
   return signingTx.serializeTx
 }
 
-function justForTest() {
-  console.log('Test');
-}
-
 /*
  * Signs the raw transaction
  * @param {String} rawTx raw transaction
@@ -554,6 +550,5 @@ module.exports = {
   applyMultiSignatures: applyMultiSignatures,
   getScriptSignature: getScriptSignature,
   mkNullDataReplayScript: mkNullDataReplayScript,
-  getSignData,
-  justForTest
+  getSignData
 }
