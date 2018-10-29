@@ -15,11 +15,11 @@ module.exports = {
     zcSpendingKeyHash: 'ab36', // Spending key
     wif: '80'
   },
-  testnet: {
+  testnet: { // for testing
     wif: 'ef',
     pubKeyHash: '2098',
     scriptHash: '2092',
     zcPaymentAddressHash: '16b6',
-    zcSpendingKeyHash: 'ac08'
+    zcSpendingKeyHash: 'ac08',
   }
 }
