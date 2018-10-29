@@ -388,10 +388,10 @@ function getSignData(_txObj, i = 0) {
   var hashcode = 129
   // Make a copy
   var txObj = JSON.parse(JSON.stringify(_txObj))
-  console.log(`第 ${i} 筆txObj:${JSON.stringify(txObj)}`)
-  // Prepare our signature
+
   // Get script from the current tx input
   var script = txObj.ins[i].prevScriptPubKey
+  
   // Populate current tx in with the prevScriptPubKey
   var signingTx = signatureForm(txObj, i, script, hashcode)
 
@@ -417,8 +417,6 @@ function inputSignature(_txObj, i, scriptSig, pubKey) {
 
   // Make a copy
   var txObj = JSON.parse(JSON.stringify(_txObj))
-  console.log(`[inputSignature]${JSON.stringify(txObj)}`)
-  console.log(`[sig]${scriptSig + pubKey}`)
 
   // Put our signature into current tx input
   txObj.ins[0].script =
@@ -427,7 +425,6 @@ function inputSignature(_txObj, i, scriptSig, pubKey) {
     zbufferutils.getPushDataLength(pubKey) +
     pubKey
 
-  console.log(`[txObj]${JSON.stringify(txObj)}`)
   return txObj
 }
 
@@ -444,19 +441,13 @@ function assemblMultipleIns(_txObjs,) {
   // Make a copy of first txObj
   var txObj = JSON.parse(JSON.stringify(_txObjs[0]))
 
-  console.log(`[assemblMultipleTx]${JSON.stringify(txObj)},length:${_txObjs.length}`)
-
   //Remove input field
   txObj.ins.splice(0,1)
 
   // Put the assembled inputs into input field of the raw tx.
   _txObjs.forEach(function (tx, idx) {
-
-    console.log(`[tx]${JSON.stringify(tx)}`)
     txObj.ins.push(tx.ins[0])
   });
-
-  console.log(`[txObj]${JSON.stringify(txObj)}`)
 
   return txObj
 }

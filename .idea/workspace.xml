@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="37c05c4a-bf91-4b2f-bdd1-9d0d9f888534" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/src/transaction.js" afterPath="$PROJECT_DIR$/src/transaction.js" />
-      <change beforePath="$PROJECT_DIR$/test/transaction.js" afterPath="$PROJECT_DIR$/test/transaction.js" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -57,8 +56,8 @@
       <file leaf-file-name="transaction.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/transaction.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="353">
-              <caret line="605" column="27" lean-forward="true" selection-start-line="605" selection-start-column="27" selection-end-line="605" selection-end-column="27" />
+            <state relative-caret-position="-609">
+              <caret line="393" column="2" lean-forward="false" selection-start-line="393" selection-start-column="2" selection-end-line="393" selection-end-column="2" />
               <folding />
             </state>
           </provider>
@@ -101,9 +100,6 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="NodeModulesDirectoryManager">
-    <handled-path value="$PROJECT_DIR$/node_modules" />
-  </component>
   <component name="NodePackageJsonFileManager">
     <packageJsonPaths>
       <path value="$PROJECT_DIR$/package.json" />
@@ -131,6 +127,7 @@
       </profile-state>
     </entry>
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
@@ -221,7 +218,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6913000" />
+    <option name="totallyTimeSpent" value="7250000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="25" width="1440" height="829" extended-state="6" />
@@ -453,8 +450,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/transaction.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="353">
-          <caret line="605" column="27" lean-forward="true" selection-start-line="605" selection-start-column="27" selection-end-line="605" selection-end-column="27" />
+        <state relative-caret-position="-609">
+          <caret line="393" column="2" lean-forward="false" selection-start-line="393" selection-start-column="2" selection-end-line="393" selection-end-column="2" />
           <folding />
         </state>
       </provider>
