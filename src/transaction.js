@@ -398,6 +398,10 @@ function getSignData(_txObj, i) {
   return signingTx.serializeTx;
 }
 
+function justForTest() {
+  console.log('Test');
+}
+
 /*
  * Signs the raw transaction
  * @param {String} rawTx raw transaction
@@ -508,10 +512,10 @@ function applyMultiSignatures(_txObj: TXOBJ,
   // const signaturesFixed = pubKeys.map(pubKey => {
   //   const keyPair = secp256k1.keyFromPublic(pubKey)
 
-  //   var match    
+  //   var match
 
   //   unmatched.some((sig, i) => {
-  //     if (!sig) return false      
+  //     if (!sig) return false
   //   })
   // })
 
@@ -550,5 +554,6 @@ module.exports = {
   applyMultiSignatures: applyMultiSignatures,
   getScriptSignature: getScriptSignature,
   mkNullDataReplayScript: mkNullDataReplayScript,
-  getSignData
+  getSignData,
+  justForTest
 }
