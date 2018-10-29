@@ -15,7 +15,7 @@ module.exports = {
     zcSpendingKeyHash: 'ab36', // Spending key
     wif: '80'
   },
-  testnet: { // for testing
+  testnet: {
     wif: 'ef',
     pubKeyHash: '2098',
     scriptHash: '2092',
