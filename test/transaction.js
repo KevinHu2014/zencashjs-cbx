@@ -1,15 +1,7 @@
 var zencashjs = require('..')
 var chai = require('chai')
 var expect = chai.expect
-var _reverse = require('buffer-reverse')
 
-it('teset reverse function', function () {
-  // Create raw transaction at current height
-  const blockHash = 'b491d3022059a3359c2466c78a9a67c05e79370d9f4c4fdf3b0d4d423ba9899e'
-  const a = _reverse(Buffer.from(blockHash,'hex')).toString('hex');
-
-console.log(`reverse a:${a}`)
-})
 
 
 it('serializeTx() and desrializeTx() should be deterministic', function () {

@@ -1,6 +1,5 @@
 // @flow
 import type {TXOBJ, HISTORY, RECIPIENTS} from './types'
-
 var bs58check = require('bs58check')
 var elliptic = require('elliptic')
 var secp256k1 = new (elliptic.ec)('secp256k1')
@@ -14,9 +13,9 @@ var zaddress = require('./address')
 var zopcodes = require('./opcodes')
 var _reverse = require('buffer-reverse')
 
-function mkNullDataReplayScript (data: string,
-  blockHeight: number,
-  blockHash: string): string {
+function mkNullDataReplayScript(data: string,
+                                blockHeight: number,
+                                blockHash: string): string {
   var dataHex = Buffer.from(data).toString('hex')
 
   // Minimal encoding
@@ -51,10 +50,10 @@ function mkNullDataReplayScript (data: string,
  * @param {String} pubKeyHash (optional)
  * return {String} pubKeyScript
  */
-function mkPubkeyHashReplayScript (address: string,
-  blockHeight: number,
-  blockHash: string,
-  pubKeyHash: string = zconfig.mainnet.pubKeyHash): string {
+function mkPubkeyHashReplayScript(address: string,
+                                  blockHeight: number,
+                                  blockHash: string,
+                                  pubKeyHash: string = zconfig.mainnet.pubKeyHash): string {
   var addrHex = bs58check.decode(address).toString('hex')
 
   // Cut out pubKeyHash
@@ -93,9 +92,9 @@ function mkPubkeyHashReplayScript (address: string,
  * @param {Number} blockHash
  * return {String} scriptHash script
  */
-function mkScriptHashReplayScript (address: string,
-  blockHeight: number,
-  blockHash: string): string {
+function mkScriptHashReplayScript(address: string,
+                                  blockHeight: number,
+                                  blockHash: string): string {
   var addrHex = bs58check.decode(address).toString('hex')
   var subAddrHex = addrHex.substring(4, addrHex.length) // Cut out the '00' (we also only want 14 bytes instead of 16)
 
@@ -129,10 +128,10 @@ function mkScriptHashReplayScript (address: string,
  * @param {Number} blockHash
  * return {String} output script
  */
-function addressToScript (address: string,
-  blockHeight: number,
-  blockHash: string,
-  data: string): string {
+function addressToScript(address: string,
+                         blockHeight: number,
+                         blockHash: string,
+                         data: string): string {
   // NULL transaction
   if (address === null || address === undefined) {
     return mkNullDataReplayScript(data, blockHeight, blockHash)
@@ -155,10 +154,10 @@ function addressToScript (address: string,
  * @param {String} hash code (SIGHASH_ALL, SIGHASH_NONE...)
  * return {String} output script
  */
-function signatureForm (txObj: TXOBJ,
-  i: number,
-  script: string,
-  hashcode: number): TXOBJ {
+function signatureForm(txObj: TXOBJ,
+                       i: number,
+                       script: string,
+                       hashcode: number): TXOBJ {
   // Copy object so we don't rewrite it
   var newTx = JSON.parse(JSON.stringify(txObj))
 
@@ -189,7 +188,7 @@ function signatureForm (txObj: TXOBJ,
  * @param {String} hex string
  * @return {Object} txOBJ
  */
-function deserializeTx (hexStr: string): TXOBJ {
+function deserializeTx(hexStr: string): TXOBJ {
   const buf = Buffer.from(hexStr, 'hex')
   var offset = 0
 
@@ -259,7 +258,7 @@ function deserializeTx (hexStr: string): TXOBJ {
  * @param {Object} txObj
  * return {String} hex string of txObj
  */
-function serializeTx (txObj: TXOBJ): string {
+function serializeTx(txObj: TXOBJ): string {
   var serializedTx = ''
   var _buf16 = Buffer.alloc(4)
 
@@ -317,10 +316,10 @@ function serializeTx (txObj: TXOBJ): string {
  * @param {String} blockHash of blockHeight
  * @return {TXOBJ} Transction Object (see TXOBJ type for info about structure)
  */
-function createRawTx (history: HISTORY[],
-  recipients: RECIPIENTS[],
-  blockHeight: number,
-  blockHash: string): TXOBJ {
+function createRawTx(history: HISTORY[],
+                     recipients: RECIPIENTS[],
+                     blockHeight: number,
+                     blockHash: string): TXOBJ {
   var txObj = {locktime: 0, version: 1, ins: [], outs: []}
 
   txObj.ins = history.map(function (h) {
@@ -347,9 +346,9 @@ function createRawTx (history: HISTORY[],
  * @params {TXOBJ} signingTx a txobj whereby all the vin script's field are empty except for the one that needs to be signed
  * @params {number} hashcode
 */
-function getScriptSignature (privKey: string,
-  signingTx: TXOBJ,
-  hashcode: number): string {
+function getScriptSignature(privKey: string,
+                            signingTx: TXOBJ,
+                            hashcode: number): string {
   // Buffer
   var _buf16 = Buffer.alloc(4)
   _buf16.writeUInt16LE(hashcode, 0)
@@ -376,27 +375,92 @@ function getScriptSignature (privKey: string,
   return signatureDER
 }
 
-/*
- * Get the sign data for CWS to sign,copy from {signTx} function
+/**
+ * @author Dorac
+ * Get the signing data for CWS to sign,copy from {signTx} function
  * @param {TXOBJ} Transction Object (see TXOBJ type for info about structure)
- * @param {Int} i
+ * @param {Int} Unused, because tx signed by single input (refernce the following {hashcode}）
  * @param {hashcode} hashcode (default SIGHASH_SINGLE_ANYONECANPAY)
- * return {String} sign data
+ * return {String} sign data for CWS
  */
-function getSignData (_txObj, i) {
+
+function getSignData(_txObj, i = 0) {
   var hashcode = 129
   // Make a copy
   var txObj = JSON.parse(JSON.stringify(_txObj))
-
+  console.log(`第 ${i} 筆txObj:${JSON.stringify(txObj)}`)
   // Prepare our signature
   // Get script from the current tx input
   var script = txObj.ins[i].prevScriptPubKey
-
   // Populate current tx in with the prevScriptPubKey
   var signingTx = signatureForm(txObj, i, script, hashcode)
 
-  return signingTx.serializeTx
+  // Buffer
+  var _buf16 = Buffer.alloc(4)
+  _buf16.writeUInt16LE(hashcode, 0)
+  const signingTxHex: string = serializeTx(signingTx)
+  const signingTxWithHashcode = signingTxHex + _buf16.toString('hex')
+
+  return signingTxWithHashcode;
 }
+
+/**
+ * @author Dorac
+ * Put signature which signed by CWS into current tx input
+ * @param {TXOBJ} Transction Object (see TXOBJ type for info about structure)
+ * @param {Int} Unused, hence tx signed with single input (refernce the following {hashcode}）
+ * @param {String} der encoding of Signature
+ * return {String} Correspond pubKey
+ */
+
+function inputSignature(_txObj, i, scriptSig, pubKey) {
+
+  // Make a copy
+  var txObj = JSON.parse(JSON.stringify(_txObj))
+  console.log(`[inputSignature]${JSON.stringify(txObj)}`)
+  console.log(`[sig]${scriptSig + pubKey}`)
+
+  // Put our signature into current tx input
+  txObj.ins[0].script =
+    zbufferutils.getPushDataLength(scriptSig) +
+    scriptSig +
+    zbufferutils.getPushDataLength(pubKey) +
+    pubKey
+
+  console.log(`[txObj]${JSON.stringify(txObj)}`)
+  return txObj
+}
+
+
+/**
+ * @author Dorac
+ * Assemble all the scipt of inputs
+ * @param {TXOBJ} Transction Object (see TXOBJ type for info about structure)
+ * return {TXOB}
+ */
+
+function assemblMultipleIns(_txObjs,) {
+
+  // Make a copy of first txObj
+  var txObj = JSON.parse(JSON.stringify(_txObjs[0]))
+
+  console.log(`[assemblMultipleTx]${JSON.stringify(txObj)},length:${_txObjs.length}`)
+
+  //Remove input field
+  txObj.ins.splice(0,1)
+
+  // Put the assembled inputs into input field of the raw tx.
+  _txObjs.forEach(function (tx, idx) {
+
+    console.log(`[tx]${JSON.stringify(tx)}`)
+    txObj.ins.push(tx.ins[0])
+  });
+
+  console.log(`[txObj]${JSON.stringify(txObj)}`)
+
+  return txObj
+}
+
 
 /*
  * Signs the raw transaction
@@ -407,11 +471,11 @@ function getSignData (_txObj, i) {
  * @param {hashcode} hashcode (default SIGHASH_ALL)
  * return {String} signed transaction
  */
-function signTx (_txObj: TXOBJ,
-  i: number,
-  privKey: string,
-  compressPubKey: boolean = false,
-  hashcode: number = zconstants.SIGHASH_ALL): TXOBJ {
+function signTx(_txObj: TXOBJ,
+                i: number,
+                privKey: string,
+                compressPubKey: boolean = false,
+                hashcode: number = zconstants.SIGHASH_ALL): TXOBJ {
   // Make a copy
   var txObj = JSON.parse(JSON.stringify(_txObj))
 
@@ -451,11 +515,11 @@ function signTx (_txObj: TXOBJ,
  * @param {string} hashcode (SIGHASH_ALL, SIGHASH_NONE, etc)
  * return {String} signature
  */
-function multiSign (_txObj: TXOBJ,
-  i: number,
-  privKey: string,
-  redeemScript: string,
-  hashcode: number = zconstants.SIGHASH_ALL): string {
+function multiSign(_txObj: TXOBJ,
+                   i: number,
+                   privKey: string,
+                   redeemScript: string,
+                   hashcode: number = zconstants.SIGHASH_ALL): string {
   // Make a copy
   var txObj = JSON.parse(JSON.stringify(_txObj))
 
@@ -478,11 +542,11 @@ function multiSign (_txObj: TXOBJ,
  * @param {string} hashcode (SIGHASH_ALL, SIGHASH_NONE, etc)
  * return {String} signature
  */
-function applyMultiSignatures (_txObj: TXOBJ,
-  i: number,
-  signatures: [string],
-  redeemScript: string,
-  hashcode: number = zconstants.SIGHASH_ALL): TXOBJ {
+function applyMultiSignatures(_txObj: TXOBJ,
+                              i: number,
+                              signatures: [string],
+                              redeemScript: string,
+                              hashcode: number = zconstants.SIGHASH_ALL): TXOBJ {
   // Make a copy
   var txObj = JSON.parse(JSON.stringify(_txObj))
 
@@ -550,5 +614,7 @@ module.exports = {
   applyMultiSignatures: applyMultiSignatures,
   getScriptSignature: getScriptSignature,
   mkNullDataReplayScript: mkNullDataReplayScript,
-  getSignData
+  getSignData,
+  inputSignature,
+  assemblMultipleIns
 }
