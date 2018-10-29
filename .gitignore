@@ -60,4 +60,7 @@ typings/
 # Visual Studio Code Env details
 .vscode/
 
+# IntelliJ
+.idea/
+
 debugging.js
